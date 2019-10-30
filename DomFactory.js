@@ -203,7 +203,7 @@ var DomFactory = function (){
 
 	self.createElementFromString = function(string)
 	{
-		var regex = /[> ]?(?:#\D[\w_-]*|\.[\w_-]+|\[([\w_-]+)(?:=(?:"([\s\S]*?)(?<!\\)"|([\s\S]*?)))?\]|[\w_-]*)/g;
+		var regex = /[> ]?(?:#\D[\w_-]*|\.[\w_-]+|\[([\w_-]+)(?:=(?:"([\s\S]*?)"|([\s\S]*?)))?\]|[\w_-]*)/g;
 		var returnDefinition = null;
 		var lastDefinition = null;
 		var match;
