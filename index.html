@@ -1,0 +1,149 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>DomFactory demo</title>
+
+		<style>
+			.code{padding:10px;color:#efefef;background-color:#5a5a5a;}
+			.example{margin:10px;padding:10px;}
+			.command{margin:10px 0px;}
+			pre.command-pre,pre.command-domfactory,pre.command-post{display:inline}
+			pre.command-pre,pre.command-post{color:#ccc;}
+			pre.command-domfactory{color:#5f84d8;}
+			.result{margin:10px 0px 0px 0px;padding:10px;border:1px solid #e8e8e8;border-bottom:0px;}
+			.html-result{margin:0px 0px 10px 0px;}
+		</style>
+	</head>
+	<body>
+
+		<script src="DomFactory.js"></script>
+	
+		<div class="examples-standalone" style="display:none;">
+			<div>'input.myLoginClass[name=login]'.createElement()</div>
+			<div>'input.myLoginClass[name=login]'.set('placeholder', 'name@domfactory.com').createElement()</div>
+			<div>'input.myLoginClass'.set({name: 'login', placeholder: 'name@domfactory.com'}).createElement()</div>
+			<div>'form[style=border:1px solid green;]>input.myLoginClass[name=login]'.createElement()</div>
+			<div>'ul.myListClass'.append(['li[text=Val 1]', 'li[text=Val 2]', 'li[text=Val 3]']).createElement()</div>
+			<div>'ul.myListClass'.append('li[text=Val 1]', 'li[text=Val 2]', 'li[text=Val 3]').createElement()</div>
+			<div>['p[text=§1]', 'p[text=§2]', 'p[text=§3]'].createElement()</div>
+			<div>'text[text="Juste a NodeText"]'.createElement()</div>
+			<div>'input'.set('onfocus', function() {
+					this.value = 'input focused';
+				}).createElement()</div>
+			<div>'input'.set('value', function() {
+					return 'value returned by a function';
+				}).createElement()</div>
+			<div>'input[size=50]'.set('onappend', function() {
+					this.value = 'input append event triggered by "set(\'onappend\')" function';
+				}).createElement()</div>
+			<div>'input[size=50]'.on('append', function() {
+					this.value = 'input append event triggered by "on(\'append\')" function';
+				}).createElement()</div>
+			<div>'input'.set({
+					value: 'change me',
+					onblur: function() {this.api.checkValue()},
+					api: {
+						checkValue: function() {
+							this.value = this.value + ' (checked)';
+						}
+					}
+				}).createElement()</div>
+		</div>
+
+		<div class="layout-init" style="display:none;">
+var domfactory = new DomFactory(
+	//Layouts
+	{
+		squareRed: ''.set({style: 'width:50px;height:50px;background-color:red;', text: 'Click me'}),
+		message: {
+			_base: function(message, isHtml) {
+				var def = {style: 'text-align:center;border-width:1px;border-style:solid; color:#425045;'};
+				def[isHtml ? 'html' : 'text'] = message;
+				return ''.set(def);
+			},
+			success: function(message, isHtml) {
+				var baseLayout = this.getLayout('message._base', message, isHtml);
+				baseLayout.setAttribute('style', baseLayout.getAttribute('style') + 'border-color:#4bc565; background-color:rgba(75, 197, 101, 0.5);');
+				return baseLayout;
+			},
+			error: function(message, isHtml) {
+				var baseLayout = this.getLayout('message._base', message, isHtml);
+				baseLayout.setAttribute('style', baseLayout.getAttribute('style') + 'border-color:#942d32; background-color:rgba(199, 79, 79, 0.5);');
+				return baseLayout;
+			}
+		}
+	},
+	// API
+	{
+		squareRed: {
+			onclick: function() {
+				this.api.grow();
+			},
+			grow: function() {
+
+				this.style.width = (parseInt(this.style.width) + 5) + 'px';
+				this.style.height= (parseInt(this.style.height) + 5) + 'px';
+			}
+		}
+	}
+);
+		</div>
+		<div class="examples-layout" style="display:none;">
+			<div>domfactory.getLayout('squareRed')</div>
+			<div>domfactory.getLayout('message.success', 'It\'s a success message')</div>
+			<div>domfactory.getLayout('message.success', 'It\'s a <b>html success</b> message', true)</div>
+			<div>domfactory.getLayout('message.error', 'It\'s an error message', true)</div>
+		</div>
+
+		<script>
+
+			var index = 0;
+			
+			function runExample(div) {
+				if (!div.textContent)
+					return;
+
+				index++;
+
+				var command = [
+					'document.querySelector(\'#example' + index + ' .result\').append(',
+					div.textContent,
+					')'
+				];
+
+				document.querySelector('body').append(
+					('.example#example' + index).append(
+						''.set('text', '#' + index),
+						'.command'.append([
+							'pre.command-pre'.set('text', command[0]),
+							'pre.command-domfactory'.set('text', command[1]),
+							'pre.command-post'.set('text', command[2])
+						]),
+						'.result',
+						'pre.html-result.code'
+					).createElement()
+				);
+				
+				eval(command.join(''));				
+				document.querySelector('#example' + index + ' .html-result').textContent = document.querySelector('#example' + index + ' .result').innerHTML;
+			}
+
+			document.querySelector('body').append('h1[text=DomFactory]'.createElement());
+
+			document.querySelector('body').append('pre.code'.set('text', document.querySelector('script').outerHTML).createElement());
+
+			document.querySelector('body').append('h3[text=Standalone examples]'.createElement());
+			document.querySelectorAll('.examples-standalone div').forEach(div => runExample(div));
+
+			document.querySelector('body').append('h3[text=DomFactory init]'.createElement());
+			var layoutInit = document.querySelector('.layout-init').textContent;
+			document.querySelector('body').append('pre'.set('text', layoutInit).createElement());
+			eval(layoutInit);
+
+			document.querySelector('body').append('h3[text=Layout examples]'.createElement());
+			document.querySelectorAll('.examples-layout div').forEach(div => runExample(div));
+
+		</script>
+
+	</body>
+</html>
