@@ -92,8 +92,8 @@ var domfactory = new DomFactory(
 		<div class="examples-layout" style="display:none;">
 			<div>domfactory.getLayout('squareRed')</div>
 			<div>domfactory.getLayout('message.success', 'It\'s a success message')</div>
-			<div>domfactory.getLayout('message.success', 'It\'s a <b>html success</b> message', true)</div>
-			<div>domfactory.getLayout('message.error', 'It\'s an error message', true)</div>
+			<div>domfactory.getLayout('message.success', 'It\'s a &lt;b&gt;html success&lt;/b&gt; message', true)</div>
+			<div>domfactory.getLayout('message.error', 'It\'s an &lt;b style="color:#911414;"&gt;error&lt;/b&gt; message', true)</div>
 		</div>
 
 		<script>
@@ -134,15 +134,15 @@ var domfactory = new DomFactory(
 			document.querySelector('body').append('pre.code'.set('text', document.querySelector('script').outerHTML).createElement());
 
 			document.querySelector('body').append('h3[text=Standalone examples]'.createElement());
-			document.querySelectorAll('.examples-standalone div').forEach(div => runExample(div));
+			document.querySelectorAll('.examples-standalone div').forEach(runExample);
 
 			document.querySelector('body').append('h3[text=DomFactory init]'.createElement());
 			var layoutInit = document.querySelector('.layout-init').textContent;
 			document.querySelector('body').append('pre'.set('text', layoutInit).createElement());
-			eval(layoutInit);
+			document.querySelector('body').append('script'.set('html', layoutInit).createElement());
 
 			document.querySelector('body').append('h3[text=Layout examples]'.createElement());
-			document.querySelectorAll('.examples-layout div').forEach(div => runExample(div));
+			document.querySelectorAll('.examples-layout div').forEach(runExample);
 
 		</script>
 
