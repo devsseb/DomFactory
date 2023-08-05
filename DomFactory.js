@@ -168,6 +168,7 @@ var DomFactory = function (){
 
 	self.createElementFromArray = function(array)
 	{
+
 		var elements = [];
 		for (var def, i = 0; def = array[i]; i++) {
 			// Add definition to last element
@@ -456,7 +457,6 @@ var DomFactory = function (){
 				}
 
 				DomFactory.definitionAssign(self.domfactorydefinition, definition);
-
 			}
 
 			return self;
@@ -468,11 +468,20 @@ var DomFactory = function (){
 
 		object.prototype.append = function(children)
 		{
-			if (this.originalAppend && children instanceof Node)
-				return this.originalAppend(children);
+			if (this.originalAppend) {
+			 	if (children instanceof Node)
+					return this.originalAppend(children);
+				else if (Array.isArray(children)) {
+					for (var i = 0; i < children.length; i++)
+						this.append(children[i]);
+					return undefined;
+				}
+			}
 
-			if (!Array.isArray(children ))
+			if (!Array.isArray(children)) // Copy arguments to children
 				children = Array.prototype.slice.call(arguments);
+
+
 
 			return this.set('children', children);
 		}
